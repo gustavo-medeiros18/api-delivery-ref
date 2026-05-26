@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.banco_de_dados import obter_banco
 from app.schemas.restaurante_schema import (
+    RestauranteAlteracao,
     RestauranteCriacao,
     RestauranteResposta
 )
@@ -14,7 +15,8 @@ from app.services.restaurante_service import (
     criar_restaurante,
     listar_restaurantes,
     buscar_restaurante_por_id,
-    deletar_restaurante
+    deletar_restaurante,
+    atualizar_restaurante
 )
 
 router = APIRouter(
@@ -66,6 +68,28 @@ def buscar_por_id(
 
     return restaurante
 
+@router.patch(
+    "/{restaurante_id}",
+    response_model=RestauranteAlteracao
+)
+def atualizar(
+    restaurante_id: int,
+    restaurante: RestauranteCriacao,
+    banco: Session = Depends(obter_banco)
+):
+    restaurante_atualizado = atualizar_restaurante(
+        banco,
+        restaurante_id,
+        restaurante
+    )
+
+    if not restaurante_atualizado:
+        raise HTTPException(
+            status_code=404,
+            detail="Restaurante não encontrado"
+        )
+
+    return restaurante_atualizado
 
 @router.delete("/{restaurante_id}")
 def deletar(

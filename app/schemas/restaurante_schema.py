@@ -20,7 +20,7 @@ class RestauranteBase(BaseModel):
         gt=0
     )
     cidade: str = Field(
-        min_length=2,
+        min_length=3,
         max_length=100
     )
     categoria: str = Field(
@@ -40,4 +40,36 @@ class RestauranteResposta(RestauranteBase):
 
     model_config = ConfigDict(
         from_attributes=True
+    )
+    
+class RestauranteAlteracao(BaseModel):
+    nome: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=100,
+        
+    )
+    rua: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=255
+    )
+    bairro: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=100
+    )
+    numero: int | None = Field(
+        default=None,
+        gt=0
+    )
+    cidade: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=100
+    )
+    categoria: str | None = Field(
+        default=None,
+        min_length=3,
+        max_length=100
     )

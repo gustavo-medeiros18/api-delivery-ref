@@ -35,6 +35,30 @@ def buscar_pedido_por_id(
         .first()
     )
 
+def atualizar_pedido(
+    banco: Session,
+    pedido_id: int,
+    dados_pedido: PedidoCriacao
+):
+    pedido = buscar_pedido_por_id(
+        banco,
+        pedido_id
+    )
+
+    if not pedido:
+        return None
+
+    pedido.prato_principal = dados_pedido.prato_principal
+    pedido.acompanhamento = dados_pedido.acompanhamento
+    pedido.observacao = dados_pedido.observacao
+    pedido.valor = dados_pedido.valor
+    pedido.restaurante_id = dados_pedido.restaurante_id
+
+    banco.commit()
+    banco.refresh(pedido)
+
+    return pedido
+
 def deletar_pedido(
     banco: Session,
     pedido_id: int
