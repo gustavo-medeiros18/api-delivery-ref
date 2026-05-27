@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.models.pedido_model import Pedido
-from app.schemas.pedido_schema import PedidoCriacao
+from app.schemas.pedido_schema import PedidoCriacao, PedidoAlteracao
 
 
 def criar_pedido(
@@ -38,7 +38,7 @@ def buscar_pedido_por_id(
 def atualizar_pedido(
     banco: Session,
     pedido_id: int,
-    dados_pedido: PedidoCriacao
+    dados_pedido: PedidoAlteracao
 ):
     pedido = buscar_pedido_por_id(
         banco,

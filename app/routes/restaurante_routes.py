@@ -70,11 +70,11 @@ def buscar_por_id(
 
 @router.patch(
     "/{restaurante_id}",
-    response_model=RestauranteAlteracao
+    response_model=RestauranteResposta
 )
 def atualizar(
     restaurante_id: int,
-    restaurante: RestauranteCriacao,
+    restaurante: RestauranteAlteracao,
     banco: Session = Depends(obter_banco)
 ):
     restaurante_atualizado = atualizar_restaurante(

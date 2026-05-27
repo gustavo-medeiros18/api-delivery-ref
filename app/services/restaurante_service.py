@@ -5,7 +5,7 @@ from app.schemas.restaurante_schema import RestauranteAlteracao, RestauranteCria
 
 def criar_restaurante(
     banco: Session,
-    restaurante: RestauranteAlteracao
+    restaurante: RestauranteCriacao
 ):
     novo_restaurante = Restaurante(
         nome=restaurante.nome,
@@ -38,7 +38,7 @@ def buscar_restaurante_por_id(
 def atualizar_restaurante(
     banco: Session,
     restaurante_id: int,
-    dados_restaurante: RestauranteCriacao
+    dados_restaurante: RestauranteAlteracao
 ):
     restaurante = buscar_restaurante_por_id(
         banco,

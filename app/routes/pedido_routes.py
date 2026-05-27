@@ -8,7 +8,8 @@ from sqlalchemy.orm import Session
 from app.banco_de_dados import obter_banco
 from app.schemas.pedido_schema import (
     PedidoCriacao,
-    PedidoResposta
+    PedidoResposta,
+    PedidoAlteracao
 )
 from app.services.pedido_service import (
     criar_pedido,
@@ -88,7 +89,7 @@ def buscar_por_id(
 )
 def atualizar(
     pedido_id: int,
-    pedido: PedidoCriacao,
+    pedido: PedidoAlteracao,
     banco: Session = Depends(obter_banco)
 ):
     restaurante = buscar_restaurante_por_id(
