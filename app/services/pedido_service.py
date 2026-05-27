@@ -1,7 +1,9 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.models.pedido_model import Pedido
 from app.schemas.pedido_schema import PedidoCriacao, PedidoAlteracao
+from app.services.restaurante_service import buscar_restaurante_por_id
 
 
 def criar_pedido(
@@ -47,12 +49,25 @@ def atualizar_pedido(
 
     if not pedido:
         return None
+    
+    if dados_pedido.restaurante_id != None:
+        restaurante = buscar_restaurante_por_id(
+            banco,
+            dados_pedido.restaurante_id
+        )
 
-    pedido.prato_principal = dados_pedido.prato_principal
-    pedido.acompanhamento = dados_pedido.acompanhamento
-    pedido.observacao = dados_pedido.observacao
-    pedido.valor = dados_pedido.valor
-    pedido.restaurante_id = dados_pedido.restaurante_id
+        if not restaurante:
+            raise HTTPException(
+                status_code=404,
+                detail="Restaurante não encontrado"
+            )
+    
+    dados_atualizacao = dados_pedido.model_dump(
+        exclude_unset=True
+    )
+
+    for campo, valor in dados_atualizacao.items():
+        setattr(pedido, campo, valor)
 
     banco.commit()
     banco.refresh(pedido)

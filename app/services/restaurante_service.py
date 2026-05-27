@@ -48,12 +48,12 @@ def atualizar_restaurante(
     if not restaurante:
         return None
 
-    restaurante.nome = dados_restaurante.nome
-    restaurante.rua = dados_restaurante.rua
-    restaurante.bairro = dados_restaurante.bairro
-    restaurante.numero = dados_restaurante.numero
-    restaurante.cidade = dados_restaurante.cidade
-    restaurante.categoria = dados_restaurante.categoria
+    dados_atualizacao = dados_restaurante.model_dump(
+        exclude_unset=True
+    )
+
+    for campo, valor in dados_atualizacao.items():
+        setattr(restaurante, campo, valor)
 
     banco.commit()
     banco.refresh(restaurante)

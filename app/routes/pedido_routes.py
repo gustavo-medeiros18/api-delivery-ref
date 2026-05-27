@@ -92,17 +92,6 @@ def atualizar(
     pedido: PedidoAlteracao,
     banco: Session = Depends(obter_banco)
 ):
-    restaurante = buscar_restaurante_por_id(
-        banco,
-        pedido.restaurante_id
-    )
-
-    if not restaurante:
-        raise HTTPException(
-            status_code=404,
-            detail="Restaurante não encontrado"
-        )
-
     pedido_atualizado = atualizar_pedido(
         banco,
         pedido_id,
