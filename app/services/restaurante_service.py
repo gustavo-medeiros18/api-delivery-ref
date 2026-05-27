@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 
 from app.models.restaurante_model import Restaurante
 from app.schemas.restaurante_schema import RestauranteAlteracao, RestauranteCriacao
+from app.dao.restaurante_dao import buscar_por_id, atualizar, criar, listar, deletar
 
 def criar_restaurante(
     banco: Session,
@@ -16,49 +17,39 @@ def criar_restaurante(
         categoria=restaurante.categoria
     )
 
-    banco.add(novo_restaurante)
-    banco.commit()
-    banco.refresh(novo_restaurante)
-
-    return novo_restaurante
+    resturante_criado = criar(banco, novo_restaurante)
+    return resturante_criado
 
 def listar_restaurantes(banco: Session):
-    return banco.query(Restaurante).all()
+    restaurantes_cadastrados = listar(banco)
+    return restaurantes_cadastrados
 
 def buscar_restaurante_por_id(
     banco: Session,
     restaurante_id: int
 ):
-    return (
-        banco.query(Restaurante)
-        .filter(Restaurante.id == restaurante_id)
-        .first()
-    )
+    restaurante_encontrado = buscar_por_id(banco, restaurante_id)
+    return restaurante_encontrado
 
 def atualizar_restaurante(
     banco: Session,
     restaurante_id: int,
     dados_restaurante: RestauranteAlteracao
 ):
-    restaurante = buscar_restaurante_por_id(
+    restaurante_existente = buscar_restaurante_por_id(
         banco,
         restaurante_id
     )
 
-    if not restaurante:
+    if not restaurante_existente:
         return None
 
     dados_atualizacao = dados_restaurante.model_dump(
         exclude_unset=True
     )
 
-    for campo, valor in dados_atualizacao.items():
-        setattr(restaurante, campo, valor)
-
-    banco.commit()
-    banco.refresh(restaurante)
-
-    return restaurante
+    restaurante_atualizado = atualizar(banco, restaurante_existente, dados_atualizacao)
+    return restaurante_atualizado
 
 def deletar_restaurante(
     banco: Session,
@@ -69,8 +60,7 @@ def deletar_restaurante(
         restaurante_id
     )
 
-    if restaurante:
-        banco.delete(restaurante)
-        banco.commit()
+    if restaurante != None:
+        deletar(banco, restaurante)
 
     return restaurante
