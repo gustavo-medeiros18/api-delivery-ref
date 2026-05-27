@@ -1,7 +1,8 @@
 from fastapi import (
     APIRouter,
     Depends,
-    HTTPException
+    HTTPException,
+    status
 )
 from sqlalchemy.orm import Session
 
@@ -91,7 +92,10 @@ def atualizar(
 
     return restaurante_atualizado
 
-@router.delete("/{restaurante_id}")
+@router.delete(
+    "/{restaurante_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 def deletar(
     restaurante_id: int,
     banco: Session = Depends(obter_banco)
@@ -107,6 +111,4 @@ def deletar(
             detail="Restaurante não encontrado"
         )
 
-    return {
-        "mensagem": "Restaurante deletado"
-    }
+    return None

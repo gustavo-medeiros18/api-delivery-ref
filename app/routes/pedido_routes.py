@@ -1,7 +1,8 @@
 from fastapi import (
     APIRouter,
     Depends,
-    HTTPException
+    HTTPException,
+    status
 )
 from sqlalchemy.orm import Session
 
@@ -106,7 +107,10 @@ def atualizar(
 
     return pedido_atualizado
 
-@router.delete("/{pedido_id}")
+@router.delete(
+    "/{pedido_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
 def deletar(
     pedido_id: int,
     banco: Session = Depends(obter_banco)
@@ -122,6 +126,4 @@ def deletar(
             detail="Pedido não encontrado"
         )
 
-    return {
-        "mensagem": "Pedido deletado"
-    }
+    return None
