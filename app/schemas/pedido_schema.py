@@ -20,8 +20,13 @@ class PedidoBase(BaseModel):
 class PedidoCriacao(PedidoBase):
     pass
 
-class PedidoResposta(PedidoBase):
+class PedidoResposta(BaseModel):
     id: int
+    prato_principal: str
+    acompanhamento: str
+    observacao: str | None
+    valor: float
+    restaurante_id: int
     created_at: datetime
     updated_at: datetime
 

@@ -33,15 +33,20 @@ class RestauranteCriacao(RestauranteBase):
     pass
 
 
-class RestauranteResposta(RestauranteBase):
+class RestauranteResposta(BaseModel):
     id: int
+    nome: str
+    rua: str
+    bairro: str
+    numero: int
+    cidade: str
+    categoria: str
     created_at: datetime
     updated_at: datetime
 
-    model_config = ConfigDict(
-        from_attributes=True
-    )
-    
+    class Config:
+        from_attributes = True
+
 class RestauranteAlteracao(BaseModel):
     nome: str | None = Field(
         default=None,
