@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, ConfigDict
 
+from app.schemas.pedido_schema import PedidoResposta
+
 
 class RestauranteBase(BaseModel):
     nome: str = Field(
@@ -78,3 +80,6 @@ class RestauranteAlteracao(BaseModel):
         min_length=3,
         max_length=100
     )
+
+class RestauranteEspecificoResposta(RestauranteResposta):
+    pedidos: list[PedidoResposta]

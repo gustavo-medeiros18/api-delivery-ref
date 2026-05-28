@@ -10,7 +10,8 @@ from app.banco_de_dados import obter_banco
 from app.schemas.restaurante_schema import (
     RestauranteAlteracao,
     RestauranteCriacao,
-    RestauranteResposta
+    RestauranteResposta,
+    RestauranteEspecificoResposta
 )
 from app.services.restaurante_service import (
     criar_restaurante,
@@ -49,7 +50,7 @@ def listar(
 
 @router.get(
     "/{restaurante_id}",
-    response_model=RestauranteResposta
+    response_model=RestauranteEspecificoResposta
 )
 def buscar_por_id(
     restaurante_id: int,
