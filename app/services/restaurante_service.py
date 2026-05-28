@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from app.models.restaurante_model import Restaurante
 from app.schemas.restaurante_schema import RestauranteAlteracao, RestauranteCriacao
@@ -60,7 +61,18 @@ def deletar_restaurante(
         restaurante_id
     )
 
-    if restaurante != None:
-        deletar(banco, restaurante)
+    if restaurante is None:
+        return None
+
+    if len(restaurante.pedidos) > 0:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Não é possível deletar restaurante "
+                "com pedidos associados"
+            )
+        )
+
+    deletar(banco, restaurante)
 
     return restaurante
