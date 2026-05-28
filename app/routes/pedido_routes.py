@@ -23,12 +23,12 @@ from app.services.restaurante_service import (
     buscar_restaurante_por_id
 )
 
-router = APIRouter(
+router_pedidos = APIRouter(
     prefix="/pedidos",
     tags=["Pedidos"]
 )
 
-@router.post(
+@router_pedidos.post(
     "/",
     response_model=PedidoResposta
 )
@@ -53,7 +53,7 @@ def criar(
     )
 
 
-@router.get(
+@router_pedidos.get(
     "/",
     response_model=list[PedidoResposta]
 )
@@ -63,7 +63,7 @@ def listar(
     return listar_pedidos(banco)
 
 
-@router.get(
+@router_pedidos.get(
     "/{pedido_id}",
     response_model=PedidoResposta
 )
@@ -84,7 +84,7 @@ def buscar_por_id(
 
     return pedido
 
-@router.patch(
+@router_pedidos.patch(
     "/{pedido_id}",
     response_model=PedidoResposta
 )
@@ -107,7 +107,7 @@ def atualizar(
 
     return pedido_atualizado
 
-@router.delete(
+@router_pedidos.delete(
     "/{pedido_id}",
     status_code=status.HTTP_204_NO_CONTENT
 )
