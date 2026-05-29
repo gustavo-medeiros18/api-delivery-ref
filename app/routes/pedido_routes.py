@@ -30,7 +30,8 @@ router_pedidos = APIRouter(
 
 @router_pedidos.post(
     "/",
-    response_model=PedidoResposta
+    response_model=PedidoResposta,
+    status_code=status.HTTP_201_CREATED
 )
 def criar(
     pedido: PedidoCriacao,

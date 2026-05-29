@@ -28,7 +28,8 @@ router_restaurantes = APIRouter(
 
 @router_restaurantes.post(
     "/",
-    response_model=RestauranteResposta
+    response_model=RestauranteResposta,
+    status_code=status.HTTP_201_CREATED
 )
 def criar(
     restaurante: RestauranteCriacao,
