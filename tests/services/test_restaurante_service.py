@@ -1,5 +1,8 @@
 from unittest.mock import patch, MagicMock
 
+from fastapi import HTTPException
+import pytest
+
 from app.services.restaurante_service import (
     criar_restaurante,
     buscar_restaurante_por_id,
@@ -110,3 +113,62 @@ def test_deletar_restaurante(
     mock_deletar.assert_called_once()
 
     assert resultado == restaurante_mock
+
+@patch("app.services.restaurante_service.buscar_restaurante_por_id")
+def test_deletar_restaurante_retorna_none_quando_nao_existe(
+    mock_buscar_restaurante
+):
+    banco_mock = MagicMock()
+
+    mock_buscar_restaurante.return_value = None
+
+    resultado = deletar_restaurante(
+        banco_mock,
+        1
+    )
+
+    assert resultado is None
+
+
+@patch("app.services.restaurante_service.buscar_restaurante_por_id")
+def test_deletar_restaurante_lanca_409_quando_tem_pedidos(
+    mock_buscar_restaurante
+):
+    banco_mock = MagicMock()
+
+    restaurante_mock = MagicMock()
+    restaurante_mock.pedidos = [MagicMock()]
+
+    mock_buscar_restaurante.return_value = restaurante_mock
+
+    with pytest.raises(HTTPException) as erro:
+        deletar_restaurante(
+            banco_mock,
+            1
+        )
+
+    assert erro.value.status_code == 409
+
+
+@patch("app.services.restaurante_service.buscar_restaurante_por_id")
+@patch("app.services.restaurante_service.deletar")
+def test_deletar_restaurante_chama_dao_quando_sem_pedidos(
+    mock_deletar,
+    mock_buscar_restaurante
+):
+    banco_mock = MagicMock()
+
+    restaurante_mock = MagicMock()
+    restaurante_mock.pedidos = []
+
+    mock_buscar_restaurante.return_value = restaurante_mock
+
+    deletar_restaurante(
+        banco_mock,
+        1
+    )
+
+    mock_deletar.assert_called_once_with(
+        banco_mock,
+        restaurante_mock
+    )
