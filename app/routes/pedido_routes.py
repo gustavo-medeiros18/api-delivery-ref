@@ -1,10 +1,8 @@
 from fastapi import (
     APIRouter,
-    Depends,
     HTTPException,
     status
 )
-from sqlalchemy.orm import Session
 
 from app.banco_de_dados import obter_banco
 from app.schemas.pedido_schema import (
@@ -34,34 +32,41 @@ router_pedidos = APIRouter(
     status_code=status.HTTP_201_CREATED
 )
 def criar(
-    pedido: PedidoCriacao,
-    banco: Session = Depends(obter_banco)
+    pedido: PedidoCriacao
 ):
-    restaurante = buscar_restaurante_por_id(
-        banco,
-        pedido.restaurante_id
-    )
+    banco = obter_banco()
 
-    if not restaurante:
-        raise HTTPException(
-            status_code=404,
-            detail="Restaurante não encontrado"
+    try:
+        restaurante = buscar_restaurante_por_id(
+            banco,
+            pedido.restaurante_id
         )
 
-    return criar_pedido(
-        banco,
-        pedido
-    )
+        if not restaurante:
+            raise HTTPException(
+                status_code=404,
+                detail="Restaurante não encontrado"
+            )
+
+        return criar_pedido(
+            banco,
+            pedido
+        )
+    finally:
+        banco.close()
 
 
 @router_pedidos.get(
     "/",
     response_model=list[PedidoResposta]
 )
-def listar(
-    banco: Session = Depends(obter_banco)
-):
-    return listar_pedidos(banco)
+def listar():
+    banco = obter_banco()
+
+    try:
+        return listar_pedidos(banco)
+    finally:
+        banco.close()
 
 
 @router_pedidos.get(
@@ -69,21 +74,25 @@ def listar(
     response_model=PedidoResposta
 )
 def buscar_por_id(
-    pedido_id: int,
-    banco: Session = Depends(obter_banco)
+    pedido_id: int
 ):
-    pedido = buscar_pedido_por_id(
-        banco,
-        pedido_id
-    )
+    banco = obter_banco()
 
-    if not pedido:
-        raise HTTPException(
-            status_code=404,
-            detail="Pedido não encontrado"
+    try:
+        pedido = buscar_pedido_por_id(
+            banco,
+            pedido_id
         )
 
-    return pedido
+        if not pedido:
+            raise HTTPException(
+                status_code=404,
+                detail="Pedido não encontrado"
+            )
+
+        return pedido
+    finally:
+        banco.close()
 
 @router_pedidos.patch(
     "/{pedido_id}",
@@ -91,40 +100,48 @@ def buscar_por_id(
 )
 def atualizar(
     pedido_id: int,
-    pedido: PedidoAlteracao,
-    banco: Session = Depends(obter_banco)
+    pedido: PedidoAlteracao
 ):
-    pedido_atualizado = atualizar_pedido(
-        banco,
-        pedido_id,
-        pedido
-    )
+    banco = obter_banco()
 
-    if not pedido_atualizado:
-        raise HTTPException(
-            status_code=404,
-            detail="Pedido não encontrado"
+    try:
+        pedido_atualizado = atualizar_pedido(
+            banco,
+            pedido_id,
+            pedido
         )
 
-    return pedido_atualizado
+        if not pedido_atualizado:
+            raise HTTPException(
+                status_code=404,
+                detail="Pedido não encontrado"
+            )
+
+        return pedido_atualizado
+    finally:
+        banco.close()
 
 @router_pedidos.delete(
     "/{pedido_id}",
     status_code=status.HTTP_204_NO_CONTENT
 )
 def deletar(
-    pedido_id: int,
-    banco: Session = Depends(obter_banco)
+    pedido_id: int
 ):
-    pedido = deletar_pedido(
-        banco,
-        pedido_id
-    )
+    banco = obter_banco()
 
-    if not pedido:
-        raise HTTPException(
-            status_code=404,
-            detail="Pedido não encontrado"
+    try:
+        pedido = deletar_pedido(
+            banco,
+            pedido_id
         )
 
-    return None
+        if not pedido:
+            raise HTTPException(
+                status_code=404,
+                detail="Pedido não encontrado"
+            )
+
+        return None
+    finally:
+        banco.close()

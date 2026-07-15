@@ -16,7 +16,4 @@ Base = declarative_base()
 def obter_banco():
     banco = SessaoLocal()
 
-    try:
-        yield banco
-    finally:
-        banco.close()
+    return banco

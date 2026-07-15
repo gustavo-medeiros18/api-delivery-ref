@@ -1,10 +1,8 @@
 from fastapi import (
     APIRouter,
-    Depends,
     HTTPException,
     status
 )
-from sqlalchemy.orm import Session
 
 from app.banco_de_dados import obter_banco
 from app.schemas.restaurante_schema import (
@@ -32,44 +30,54 @@ router_restaurantes = APIRouter(
     status_code=status.HTTP_201_CREATED
 )
 def criar(
-    restaurante: RestauranteCriacao,
-    banco: Session = Depends(obter_banco)
+    restaurante: RestauranteCriacao
 ):
-    return criar_restaurante(
-        banco,
-        restaurante
-    )
+    try:
+        banco = obter_banco()
+
+        return criar_restaurante(
+            banco,
+            restaurante
+        )
+    finally:
+        banco.close()
 
 @router_restaurantes.get(
     "/",
     response_model=list[RestauranteResposta]
 )
-def listar(
-    banco: Session = Depends(obter_banco)
-):
-    return listar_restaurantes(banco)
+def listar():
+    banco = obter_banco()
+
+    try:
+        return listar_restaurantes(banco)
+    finally:
+        banco.close()
 
 @router_restaurantes.get(
     "/{restaurante_id}",
     response_model=RestauranteEspecificoResposta
 )
 def buscar_por_id(
-    restaurante_id: int,
-    banco: Session = Depends(obter_banco)
+    restaurante_id: int
 ):
-    restaurante = buscar_restaurante_por_id(
-        banco,
-        restaurante_id
-    )
+    banco = obter_banco()
 
-    if not restaurante:
-
-        raise HTTPException(
-            status_code=404,
-            detail="Restaurante não encontrado"
+    try:
+        restaurante = buscar_restaurante_por_id(
+            banco,
+            restaurante_id
         )
 
-    return restaurante
+        if not restaurante:
+            raise HTTPException(
+                status_code=404,
+                detail="Restaurante não encontrado"
+            )
+
+        return restaurante
+    finally:
+        banco.close()
 
 @router_restaurantes.patch(
     "/{restaurante_id}",
@@ -77,40 +85,48 @@ def buscar_por_id(
 )
 def atualizar(
     restaurante_id: int,
-    restaurante: RestauranteAlteracao,
-    banco: Session = Depends(obter_banco)
+    restaurante: RestauranteAlteracao
 ):
-    restaurante_atualizado = atualizar_restaurante(
-        banco,
-        restaurante_id,
-        restaurante
-    )
+    banco = obter_banco()
 
-    if not restaurante_atualizado:
-        raise HTTPException(
-            status_code=404,
-            detail="Restaurante não encontrado"
+    try:
+        restaurante_atualizado = atualizar_restaurante(
+            banco,
+            restaurante_id,
+            restaurante
         )
 
-    return restaurante_atualizado
+        if not restaurante_atualizado:
+            raise HTTPException(
+                status_code=404,
+                detail="Restaurante não encontrado"
+            )
+
+        return restaurante_atualizado
+    finally:
+        banco.close()
 
 @router_restaurantes.delete(
     "/{restaurante_id}",
     status_code=status.HTTP_204_NO_CONTENT
 )
 def deletar(
-    restaurante_id: int,
-    banco: Session = Depends(obter_banco)
+    restaurante_id: int
 ):
-    restaurante = deletar_restaurante(
-        banco,
-        restaurante_id
-    )
+    banco = obter_banco()
 
-    if not restaurante:
-        raise HTTPException(
-            status_code=404,
-            detail="Restaurante não encontrado"
+    try:
+        restaurante = deletar_restaurante(
+            banco,
+            restaurante_id
         )
 
-    return None
+        if not restaurante:
+            raise HTTPException(
+                status_code=404,
+                detail="Restaurante não encontrado"
+            )
+
+        return None
+    finally:
+        banco.close()

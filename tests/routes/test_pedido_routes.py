@@ -42,6 +42,6 @@ def test_criar_pedido(
         }
     )
 
-    assert response.status_code == 200
+    assert response.status_code == 201
     dados = response.json()
     assert dados["prato_principal"] == "Hamburguer"
