@@ -43,8 +43,3 @@ class Pedido(Base):
         default=agora_iso,
         onupdate=agora_iso,
     )
-
-    restaurante = relationship(
-        "Restaurante",
-        back_populates="pedidos"
-    )

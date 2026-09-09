@@ -68,32 +68,6 @@ def listar():
     finally:
         banco.close()
 
-
-@router_pedidos.get(
-    "/{pedido_id}",
-    response_model=PedidoResposta
-)
-def buscar_por_id(
-    pedido_id: int
-):
-    banco = obter_banco()
-
-    try:
-        pedido = buscar_pedido_por_id(
-            banco,
-            pedido_id
-        )
-
-        if not pedido:
-            raise HTTPException(
-                status_code=404,
-                detail="Pedido não encontrado"
-            )
-
-        return pedido
-    finally:
-        banco.close()
-
 @router_pedidos.patch(
     "/{pedido_id}",
     response_model=PedidoResposta

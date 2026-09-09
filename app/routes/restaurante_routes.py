@@ -54,31 +54,6 @@ def listar():
     finally:
         banco.close()
 
-@router_restaurantes.get(
-    "/{restaurante_id}",
-    response_model=RestauranteEspecificoResposta
-)
-def buscar_por_id(
-    restaurante_id: int
-):
-    banco = obter_banco()
-
-    try:
-        restaurante = buscar_restaurante_por_id(
-            banco,
-            restaurante_id
-        )
-
-        if not restaurante:
-            raise HTTPException(
-                status_code=404,
-                detail="Restaurante não encontrado"
-            )
-
-        return restaurante
-    finally:
-        banco.close()
-
 @router_restaurantes.patch(
     "/{restaurante_id}",
     response_model=RestauranteResposta

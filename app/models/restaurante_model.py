@@ -34,7 +34,4 @@ class Restaurante(Base):
         onupdate=agora_iso
     )
 
-    pedidos = relationship(
-        "Pedido",
-        back_populates="restaurante"
-    )
+    pedidos = relationship("Pedido")
